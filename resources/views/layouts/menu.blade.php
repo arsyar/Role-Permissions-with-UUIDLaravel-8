@@ -1,11 +1,11 @@
-<li class="side-menus {{ Request::is('*') ? 'active' : '' }}">
+<li class="side-menus {{ Request::is('home*') ? 'active' : '' }}">
     <a class="nav-link" href="/">
-        <i class=" fas fa-building"></i><span>Dashboard</span>
+        <i class=" fas fa-home"></i><span>Dashboard</span>
     </a>
 </li>
 
-<li class="side-menus {{ Request::is('*') ? 'active' : '' }}">
+<li class="side-menus {{ Request::is('users*') ? 'active' : '' }}">
     <a class="nav-link" href="{{route('users.index')}}">
-        <i class=" fas fa-building"></i><span>User</span>
+        <i class=" fas fa-users"></i><span>User</span>
     </a>
 </li>
