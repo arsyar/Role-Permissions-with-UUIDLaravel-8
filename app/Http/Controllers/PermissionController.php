@@ -16,7 +16,8 @@ class PermissionController extends Controller
     public function index()
     {
         $permissions = Permission::all();
-        return view('permission.index',compact('permissions'));
+
+        return view('permissions.index',compact('permissions'));
     }
 
     /**
@@ -37,7 +38,21 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'addMoreInputFields.*.name' => 'required|unique:permissions,name'
+        ]);
+
+        try{
+            DB::beginTransaction();
+            foreach ($request->addMoreInputFields as $key => $value){
+                Permission::create($value);
+            }
+            DB::commit();
+            return back()->with('success', 'Permission Berhasil ditambahkan');
+        }catch(Exception $e){
+            DB::rollBack();
+            return back()->with('error', 'Data gagal ditambahkan');
+        }
     }
 
     /**
@@ -59,7 +74,11 @@ class PermissionController extends Controller
      */
     public function edit($id)
     {
-        //
+        $permissions = Permission::find($id);
+        if (Empty($permissions)) {
+            return back()->with('error', 'Data tidak ditemukan');
+        }
+        return view('permissions.edit', compact('permissions'));
     }
 
     /**
@@ -71,7 +90,21 @@ class PermissionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|unique:permissions,name',
+        ]);
+        $input = $request->all();
+        try{
+            DB::beginTransaction();
+            $permission = Permission::find($id);
+            $permission->update($input);
+            DB::commit();
+
+            return redirect()->route('permissions.index')->with('success', 'Permission berhasil diubah');
+        }catch(Exception $e){
+            Db::rollBack();
+            return back()->with('error', 'Permission gagal diproses');
+        }
     }
 
     /**
@@ -82,6 +115,11 @@ class PermissionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $permissions= Permission::find($id);
+        if (empty($permissions)) {
+            return back()->with('error', 'Data tidak ditemukan');
+        }
+        $permissions->delete();
+        return back()->with('success', 'Data berhasil di hapus');
     }
 }
