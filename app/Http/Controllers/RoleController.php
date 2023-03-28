@@ -66,11 +66,12 @@ class RoleController extends Controller
     public function show($id)
     {
         $roles = Role::find($id);
+        $rolePermissions = $roles->permissions;
         //validasi
         if (empty($roles)) {
             return back()->with('error', 'Data tidak ditemukan');
         }
-        return view('roles.show',compact('roles'));
+        return view('roles.show',compact('roles','rolePermissions'));
     }
 
     /**
@@ -83,9 +84,8 @@ class RoleController extends Controller
     {
         $permission = Permission::get();
         $roles = Role::find($id);
-        $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$id)
-        ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
-        ->all();
+        $rolePermissions = $roles->permissions->pluck('name')->toArray();
+        $permissions = Permission::get();
         //validasi
         if (empty($roles)) {
             return back()->with('error', 'Data tidak ditemukan');

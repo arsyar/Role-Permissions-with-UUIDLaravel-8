@@ -22,17 +22,30 @@
                                     <div class="col-md-4">
                                         {!! Form::label('name', 'Name:') !!}
                                         <input type="text" class="form-control border-primary" placeholder=""
-                                            name="name">
-                                    </div>
-                                    <div class="col-md-4">
-                                        {!! Form::label('permission', 'Permission:') !!}<br>
-                                        @foreach ($permission as $value)
-                                            <label>{{ Form::checkbox('permission[]', $value->id, false, ['class' => 'name']) }}
-                                                {{ $value->name }}</label>
-                                            <br />
-                                        @endforeach
+                                            name="name" required>
                                     </div>
                                 </div>
+                                <label for="permissions" class="form-label">Assign Permissions</label>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <th scope="col" width="1%"><input type="checkbox" name="all_permission">
+                                        </th>
+                                        <th scope="col" width="20%">Name</th>
+                                        <th scope="col" width="1%">Guard</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($permission as $permission)
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" name="permission[{{ $permission->name }}]"
+                                                        value="{{ $permission->name }}" class='permission'>
+                                                </td>
+                                                <td>{{ $permission->name }}</td>
+                                                <td>{{ $permission->guard_name }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                                 <div class="form-group col-sm-12">
                                     <a href="{{ route('roles.index') }}" class="btn btn-light">Cancel</a>
                                     {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
@@ -45,4 +58,24 @@
             </div>
         </div>
     </section>
+@endsection
+
+@section('scripts')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('[name="all_permission"]').on('click', function() {
+
+                if($(this).is(':checked')) {
+                    $.each($('.permission'), function() {
+                        $(this).prop('checked',true);
+                    });
+                } else {
+                    $.each($('.permission'), function() {
+                        $(this).prop('checked',false);
+                    });
+                }
+
+            });
+        });
+    </script>
 @endsection
